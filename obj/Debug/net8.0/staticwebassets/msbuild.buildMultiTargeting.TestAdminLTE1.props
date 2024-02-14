@@ -1,0 +1,3 @@
+﻿<Project>
+  <Import Project="..\build\TestAdminLTE1.props" />
+</Project>

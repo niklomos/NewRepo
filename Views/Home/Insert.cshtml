@@ -51,8 +51,46 @@
                     <!-- /.box-body -->
 
                     <div class="box-footer">
-                        <button type="submit" class="btn btn-primary">Submit</button>
+                        <button type="submit2" class="btn btn-primary">Submit</button>
                     </div>
                 </form>
             </div>
             <!-- /.box -->
+            <div class="container-fluid text-center " style="margin-top:10px;">
+                @*   <h2>Insert</h2>  *@
+
+                <input id="fname" class="form-control " type="text" placeholder="First Name">
+                <input id="lname" class="form-control " type="text" placeholder="Last Name" style="margin-top:10px;">
+                <button id="submit" class="btn btn-success " style="margin-top:10px;">submit</button>
+
+            </div>
+    </section>
+
+            <script>
+
+    $("#submit").click(function () {
+        var fname = $("#fname").val();
+        var lname = $("#lname").val();
+
+        $.ajax({
+            url: "/Home/saveName",
+            data: {
+                fname: fname,
+                lname: lname
+            },
+            type: "POST",
+            success: function (data) {
+                alert("Success");
+                window.location.href = "/Home/SelectStudent";
+
+                // เคลียร์ค่าใน input fields หลังจากเพิ่มข้อมูลเสร็จสมบูรณ์
+                $("#fname").val("");
+                $("#lname").val("");
+            },
+            error: function (error) {
+                console.error(error);
+            }
+        });
+    });
+
+ </script>
