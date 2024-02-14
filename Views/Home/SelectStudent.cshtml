@@ -1,0 +1,149 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+<section class="content-header mb-3">
+    <h1>
+        List Table
+    </h1>
+    <ol class="breadcrumb">
+      <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+      <li><a href="#">Examples</a></li>
+      <li class="active">User profile</li>
+    </ol> 
+</section>
+
+<div class="container-fluid text-center " style="margin-top:10px;">
+    @*   <h2>Insert</h2>  *@
+
+     <input id="fname" class="form-control " type="text" placeholder="First Name">
+    <input id="lname" class="form-control " type="text" placeholder="Last Name" style="margin-top:10px;">
+    <button id="submit" class="btn btn-success " style="margin-top:10px;">submit</button>
+
+  </div>
+
+    <div id="result-container" class="mt-5 container-fluid" style="margin-top:20px;">
+        <!-- นี่คือตารางที่ใช้ในการแสดงข้อมูล -->
+        <table class="table mt-5  ">
+           
+            <thead>
+                <tr class="text-center bg-primary">
+                    <th class="text-center">Id</th>
+                    <th class="text-center">First Name</th>
+                    <th class="text-center">Last Name</th>
+                    <th class="text-center">Delete</th>
+                    <th class ="text-center">Edit</th>
+                </tr>
+            </thead>
+            <tbody id="data-table-body" >
+                <!-- ตารางข้อมูลจะถูกแสดงที่นี่ -->
+            </tbody>
+            
+            
+        </table>
+
+        
+    </div>
+
+@* Insert data *@
+
+<script>
+
+    $("#submit").click(function () {
+        var fname = $("#fname").val();
+        var lname = $("#lname").val();
+
+        $.ajax({
+            url: "/Home/saveName",
+            data: {
+                fname: fname,
+                lname: lname
+            },
+            type: "POST",
+            success: function (data) {
+                fetchData();
+                alert("Success");
+
+                // เคลียร์ค่าใน input fields หลังจากเพิ่มข้อมูลเสร็จสมบูรณ์
+                $("#fname").val("");
+                $("#lname").val("");
+            },
+            error: function (error) {
+                console.error(error);
+            }
+        });
+    });
+
+</script>
+
+@* 
+ Select data  *@
+    <script>
+        // เมื่อหน้าเว็บโหลดเสร็จ ให้ดึงข้อมูลจากฐานข้อมูล
+        $(document).ready(function () {
+            fetchData();
+        });
+
+    function fetchData() {
+        $.ajax({
+            url: "/Home/GetNames",
+            type: "GET",
+            success: function (data) {
+                // ล้างข้อมูลในตารางก่อนเพื่อที่จะแสดงข้อมูลใหม่
+                $("#data-table-body").empty();
+
+                // วนลูปผ่านข้อมูลที่ได้รับมาและแสดงในตาราง
+                for (var i = 0; i < data.length; i += 3) { // เนื่องจากข้อมูลเรียงลำดับด้วย id, fname, lname ต่อๆ กัน
+                    var id = data[i];
+                    var fname = data[i + 1];
+                    var lname = data[i + 2];
+
+                    // เพิ่มแถวใหม่ในตาราง
+                    var newRow = "<tr class='text-center'>" +
+                        "<td  style='border-bottom: 1px solid black;' >" + id + "</td>" +
+                        "<td  style='border-bottom: 1px solid black;' >" + fname + "</td>" +
+                        "<td  style='border-bottom: 1px solid black;' >" + lname + "</td>" +
+                        "<td  style='border-bottom: 1px solid black;' ><button class='btn btn-danger btn-sm' onclick='deleteData(" + id + ")'>Delete</button></td>" +
+                        "<td  style='border-bottom: 1px solid black;' ><button class='btn btn-primary btn-sm' onclick='editData(" + id + ")'>Edit</button></td>" +
+                        "</tr>";
+                    $("#data-table-body").append(newRow);
+                }
+            },
+            error: function (error) {
+                console.error(error);
+            }
+        });
+    }
+</script>
+
+@* Delete data *@
+
+<script>
+    function deleteData(id) {
+        $.ajax({
+            url: "/Home/DeleteData",
+            data: { id: id },
+            type: "POST",
+            success: function (data) {
+                alert("Data deleted successfully.");
+                // หลังจากลบข้อมูลเสร็จแล้วให้โหลดข้อมูลใหม่เพื่ออัพเดทตาราง
+                fetchData();
+            },
+            error: function (error) {
+                console.error(error);
+            }
+        });
+    }
+
+
+</script>
+
+
+
+<script>
+    function editData(id) {
+        // เปลี่ยนไปยังหน้า edit.cshtml โดยส่งพารามิเตอร์ ID ไปด้วย
+        window.location.href = "/Home/Edit?id=" + id;
+    }
+</script>
+
+

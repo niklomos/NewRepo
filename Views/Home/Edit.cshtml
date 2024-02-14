@@ -1,0 +1,62 @@
+﻿@model TestAdminLTE1.Models.Student
+
+@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+    ViewData["Title"] = "Home Page";
+   
+}
+
+
+<div class="container">
+    <h2>Edit Student</h2>
+    <div class="row">
+        <div class="col-md-6">
+            <form id="editForm">
+                <input type="hidden" id="id" name="id" value="@Model.Id" />
+                <div class="form-group">
+                    <label for="fname">First Name</label>
+                    <input type="text" class="form-control" id="fname" name="fname" value="@Model.Fname" />
+                </div>
+                <div class="form-group">
+                    <label for="lname">Last Name</label>
+                    <input type="text" class="form-control" id="lname" name="lname" value="@Model.Lname" />
+                </div>
+                <button type="button" class="btn btn-primary" onclick="updateData()">Update</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts {
+  
+    <script>
+        function updateData() {
+            var id = $("#id").val();
+            var fname = $("#fname").val();
+            var lname = $("#lname").val();
+
+            $.ajax({
+                url: "/Home/Update",
+                type: "POST",
+                data: {
+                    id: id,
+                    fname: fname,
+                    lname: lname
+                },
+                success: function (response) {
+                    alert("Student updated successfully.");
+                    // เมื่ออัปเดตข้อมูลสำเร็จ ให้เปลี่ยนไปยังหน้า SelectStudent.cshtml
+                    window.location.href = "/Home/SelectStudent";
+                },
+                error: function (error) {
+                    console.error(error);
+                    // จัดการข้อผิดพลาดตามที่เหมาะสม
+                }
+            });
+        }
+    </script>
+}
+
