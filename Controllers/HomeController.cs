@@ -19,6 +19,18 @@ namespace TestAdminLTE1.Controllers
             
         }
 
+        public IActionResult TestModel2()
+        {
+            var students = GetStudentsFromDatabase();
+            return View(students);
+        }
+
+        public IActionResult TestModel()
+        {
+            var names = GetNames2();
+            return View(names);
+        }
+
         public IActionResult Index()
         {
             return View();
@@ -39,7 +51,9 @@ namespace TestAdminLTE1.Controllers
         }
         public IActionResult SelectStudent()
         {
+           
             return View();
+
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
@@ -292,6 +306,120 @@ namespace TestAdminLTE1.Controllers
             }
         }
 
+
+
+
+        private Student GetNameByModel()
+        {
+            // สร้าง connection string สำหรับการเชื่อมต่อ MySQL database
+            string connectionString = _configuration.GetConnectionString("connectionStr");
+
+            // สร้างคำสั่ง SQL สำหรับการดึงข้อมูลนักเรียนโดยใช้ ID
+            string query = "SELECT Id, Username, Password FROM testlogin ";;
+
+            // สร้าง connection object และ command object
+            using (MySqlConnection connection = new MySqlConnection(connectionString))
+            using (MySqlCommand command = new MySqlCommand(query, connection))
+            {
+                // เพิ่ม parameter เพื่อป้องกัน SQL injection
+
+                try
+                {
+                    // เปิดการเชื่อมต่อ MySQL database
+                    connection.Open();
+
+                    // สร้าง reader object เพื่ออ่านข้อมูลจาก MySQL database
+                    MySqlDataReader reader = command.ExecuteReader();
+
+                    // ตรวจสอบว่าพบข้อมูลหรือไม่
+                    if (reader.Read())
+                    {
+                        // สร้าง object ข้อมูลนักเรียน
+                        var student = new Student
+                        {
+                            Id = Convert.ToInt32(reader["id"]),
+                            Fname = reader["fname"].ToString(),
+                            Lname = reader["lname"].ToString()
+                        };
+
+                        return student;
+                    }
+                    else
+                    {
+                        return null;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    // หากเกิดข้อผิดพลาดในการเชื่อมต่อหรือการอ่านข้อมูล
+                    // สามารถจัดการข้อผิดพลาดตามที่ต้องการ
+                    // เช่น แสดงหน้าข้อผิดพลาด บันทึก log เป็นต้น
+                    _logger.LogError(ex, "Error while fetching student data.");
+                    return null;
+                }
+            }
+        }
+
+        public IEnumerable<string> GetNames2()
+        {
+            List<string> names = new List<string>();
+            string con = _configuration.GetConnectionString("connectionStr");
+            MySqlConnection connection = new MySqlConnection(con);
+            connection.Open();
+
+            var sqlSelect = "SELECT id,fname,lname FROM Students";
+            MySqlCommand nice = new MySqlCommand(sqlSelect, connection);
+
+            MySqlDataReader reader = nice.ExecuteReader();
+            {
+                while (reader.Read())
+                {
+                    names.Add($"ID: {reader["id"]}, First Name: {reader["fname"]}, Last Name: {reader["lname"]}");
+                }
+            }
+
+            return names;
+        }
+
+        // ฟังก์ชันสำหรับดึงข้อมูลนักเรียนจากฐานข้อมูล
+        private IEnumerable<Student> GetStudentsFromDatabase()
+        {
+            List<Student> students = new List<Student>();
+
+            string connectionString = _configuration.GetConnectionString("connectionStr");
+            MySqlConnection connection = new MySqlConnection(connectionString);
+
+            try
+            {
+                connection.Open();
+
+                string sqlSelect = "SELECT id, fname, lname FROM Students";
+                MySqlCommand command = new MySqlCommand(sqlSelect, connection);
+                MySqlDataReader reader = command.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    Student student = new Student
+                    {
+                        Id = Convert.ToInt32(reader["id"]),
+                        Fname = reader["fname"].ToString(),
+                        Lname = reader["lname"].ToString()
+                    };
+
+                    students.Add(student);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error while fetching student data from database.");
+            }
+            finally
+            {
+                connection.Close();
+            }
+
+            return students;
+        }
 
     }
 }

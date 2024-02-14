@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("TestAdminLTE1")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+b56ed6ad5f34aff160a77f8bd02004d24c7eaed8")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+8686c9b80a4775128d624e98e9522d2675570d34")]
 [assembly: System.Reflection.AssemblyProductAttribute("TestAdminLTE1")]
 [assembly: System.Reflection.AssemblyTitleAttribute("TestAdminLTE1")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
